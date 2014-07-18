@@ -9,19 +9,132 @@
 [credential]
         helper = GIT_CREDENTIAL_HELPER
 [alias]
-        co = checkout
         promote = !$ZSH/bin/git-promote
         wtf     = !$ZSH/bin/git-wtf
         rank-contributors = !$ZSH/bin/git-rank-contributors
         count   = !git shortlog -sn
+        
+        st = status -s
+
+        cl = clone
+
+        ci = commit
+        cm = commit -m
+        cma = commit -a -m
+        ca = commit --amend
+        amend = commit --amend
+        caa = commit -a --amend -C HEAD
+        
+        filelog = log -u
+        fl = log -u
+
+        ai = add --interactive
+
+        co = checkout
+        br = branch 
+        #"!git branch -ra | grep -v done"
+        bra = branch -ra
+
+        #updates
+        spp = "!git stash;git pull;git stash pop"
+        spa = "!git stash;git pull;git stash apply"
+
+        #list commands
+        le = log --oneline --decorate
+        ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+        ls1 = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+        lds = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph
+        ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+        lc  = "!f() { git ll "$1"^.."$1"; }; f"
+        lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
+        lol = log --pretty=oneline --abbrev-commit --graph --decorate
+        
+        #list all aliases
+        la = "!git config -l | grep alias | cut -c 7-"
+        
+        diff = diff --word-diff
+        d = diff --word-diff
+        dc = diff --cached
+        
+        #list modified files in last commit
+        dl = "!git ll -1"
+        
+        #diff last commit
+        dlc = diff --cached HEAD^
+        dr  = "!f() { git diff "$1"^.."$1"; }; f"
+        diffr  = "!f() { git diff "$1"^.."$1"; }; f"
+        branch = branch -ra
+
+        #reset commands
+        r = reset
+        r1 = reset HEAD^
+        r2 = reset HEAD^^
+        rh = reset --hard
+        rh1 = reset HEAD^ --hard
+        rh2 = reset HEAD^^ --hard
+
+        #git svn
+        svnr = svn rebase
+        svnd = svn dcommit
+        svnl = svn log --oneline --show-commit
+
+        #stash
+        sl = stash list
+        sa = stash apply
+        ss = stash save
+
+        cp = cherry-pick
+
+        #assume aliases
+        assume = update-index --assume-unchanged
+        unassume = update-index --no-assume-unchanged
+
+        #show assumed files
+        assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+
+        #unassume all the assumed files
+        unassumeall = "!git assumed | xargs git update-index --no-assume-unchanged"
+        assumeall = "!git st -s | awk {'print $2'} | xargs git assume"
+
+        lasttag = describe --tags --abbrev=0
+        lt = describe --tags --abbrev=0
+
+        #merges
+        ours = "!f() { git co --ours $@ && git add $@; }; f"
+        theirs = "!f() { git co --theirs $@ && git add $@; }; f"
+        track = "!f() { git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD); }; f"
+        whatsup = "!f() { git fetch ; TRACKED_BRANCH=$(git track) ; git ls $TRACKED_BRANCH; }; f"
+        alltrack = "!sh -c \"\nif [ \\$# -eq 2 ]\n then\n   echo \\\"Setting tracking for branch \\\" \\$1 \\\" -> \\\" \\$2;\n   git branch --set-upstream \\$1 \\$2;\n else\n   git for-each-ref --format=\\\"local: %(refname:short) <--sync--> remote: %(upstream:short)\\\" refs/heads && echo --URLs && git remote -v;\nfi  \n\" -"
+        
+        wu = "!git whatsup"
+
+        #archive
+        export = "!f() { git archive --format=zip --output ../$(basename `git rev-parse --show-toplevel`)_$(date +%d-%m-%Y-%H.%M).zip $1; }; f"
+
 [color]
         diff = auto
         status = auto
         branch = auto
         ui = true
+[color "branch"]
+        current = red reverse
+        local = blue
+        remote = green
+
+[color "diff"]
+        meta = yellow
+        frag = magenta
+        old = red
+        new = green
+
+[color "status"]
+        added = yellow
+        changed = green
+        untracked = cyan        
 [core]
         excludesfile = ~/.gitignore
-        editor = vim
+        editor = e
+        pager=less -x4
 [apply]
         whitespace = nowarn
 [mergetool]
@@ -36,3 +149,5 @@
         #
         # Setting to git 2.0 default to surpress warning message
         default = simple
+[diff "localizablestrings"]
+        textconv = "iconv -f utf-16 -t utf-8"
