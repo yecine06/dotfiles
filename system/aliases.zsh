@@ -8,3 +8,8 @@ then
   alias ll="gls -l --color"
   alias la='gls -A --color'
 fi
+
+alias cpwd="pwd | tr -d '\n' | pbcopy"
+alias pwc=cpwd
+
+alias xc=xcode
